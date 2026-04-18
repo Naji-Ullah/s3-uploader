@@ -51,6 +51,8 @@ const envSchema = z.object({
   REDIS_URL: z.union([z.string().url(), z.literal("")]).optional(),
   S3_REGION: z.string().default("us-east-1"),
   S3_BUCKET: z.string().optional(),
+  S3_PUBLIC_BASE_URL: z.string().url().optional(),
+  S3_GET_URL_EXPIRES_IN_SECONDS: z.coerce.number().int().positive().max(3600).default(300),
   AWS_ACCESS_KEY_ID: z.string().optional(),
   AWS_SECRET_ACCESS_KEY: z.string().optional(),
   ALLOWED_ORIGIN: z.string().default("http://localhost:3000")

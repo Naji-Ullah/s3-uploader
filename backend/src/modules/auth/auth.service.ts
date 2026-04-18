@@ -3,6 +3,7 @@ import { prisma } from "../../lib/prisma";
 import { AppError } from "../../utils/app-error";
 import { signAccessToken, signRefreshToken, verifyRefreshToken } from "../../utils/jwt";
 import { comparePassword, hashPassword } from "../../utils/password";
+import { cacheUserSession, clearUserSession } from "./auth.session";
 import { AuthResponse, AuthTokens, LoginInput, RegisterInput } from "./auth.types";
 
 interface AuthUserRecord {
@@ -41,6 +42,16 @@ async function issueTokens(user: Pick<AuthUserRecord, "id" | "name" | "email">):
     where: { id: user.id },
     data: { refreshTokenHash }
   });
+
+  await cacheUserSession(
+    {
+      userId: user.id,
+      email: user.email,
+      name: user.name,
+      issuedAt: new Date().toISOString()
+    },
+    env.JWT_REFRESH_EXPIRES_IN
+  );
 
   return {
     accessToken,
@@ -152,8 +163,11 @@ export async function refresh(refreshToken: string): Promise<AuthResponse> {
 }
 
 export async function logout(userId: string): Promise<void> {
-  await prisma.user.update({
-    where: { id: userId },
-    data: { refreshTokenHash: null }
-  });
+  await Promise.all([
+    prisma.user.update({
+      where: { id: userId },
+      data: { refreshTokenHash: null }
+    }),
+    clearUserSession(userId)
+  ]);
 }
