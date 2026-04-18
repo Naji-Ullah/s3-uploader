@@ -223,7 +223,6 @@ Client listens in dashboard for:
    - `s3:GetObject`
    - `s3:DeleteObject`
 4. Add credentials to backend `.env`.
-5. Never commit credentials.
 
 ## Frontend Features
 
