@@ -50,6 +50,10 @@ Required keys:
 - `AWS_SECRET_ACCESS_KEY`
 - `ALLOWED_ORIGIN`
 
+Optional Docker bootstrap keys:
+- `PRISMA_DB_SYNC_MODE` (`migrate` by default, use `push` only for local/dev quick schema sync)
+- `PRISMA_SEED_ON_START` (`true` by default)
+
 For Docker Compose networking, use:
 - `REDIS_URL=redis://redis:6379`
 
@@ -75,11 +79,16 @@ This starts:
 - postgres on `localhost:55432`
 - redis on `localhost:6379`
 
-After first startup, seed categories:
+On container startup, backend automatically runs:
+- `prisma generate`
+- `prisma migrate deploy` (or `db push` if `PRISMA_DB_SYNC_MODE=push`)
+- `prisma:seed`
+
+So a new clone only needs:
 
 ```bash
 cd backend
-npm run prisma:seed
+docker compose up --build
 ```
 
 ### Option B: Run services manually
@@ -95,6 +104,11 @@ npm run prisma:deploy
 npm run prisma:seed
 npm run dev
 ```
+
+Schema change workflow (recommended):
+1. Run `npm run prisma:migrate -- --name <change_name>` locally.
+2. Commit both `schema.prisma` and generated migration files.
+3. Teammates only run `docker compose up --build`; startup applies migrations automatically.
 
 3. Frontend:
 
