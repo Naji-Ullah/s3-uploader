@@ -12,7 +12,6 @@ import {
   DashboardData,
   DocumentCategory,
   RealtimeConnectionStatus,
-  RealtimeDeletedDocumentEvent,
   RealtimeDocumentEvent,
   RealtimeNotification
 } from "@/types/auth";
@@ -126,7 +125,7 @@ export function useDashboardSession({ onDocumentsSync }: UseDashboardSessionOpti
         void onDocumentsSync();
       });
 
-      socket.on("document:deleted", (_payload: RealtimeDeletedDocumentEvent) => {
+      socket.on("document:deleted", () => {
         toast.info("A document was deleted");
         void onDocumentsSync();
       });
