@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -29,25 +29,6 @@ const registerSchema = z
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
-function getPasswordStrength(password: string): { label: string; width: string; color: string } {
-  let score = 0;
-
-  if (password.length >= 8) score += 1;
-  if (/[A-Z]/.test(password)) score += 1;
-  if (/[0-9]/.test(password)) score += 1;
-  if (/[^A-Za-z0-9]/.test(password)) score += 1;
-
-  if (score <= 1) {
-    return { label: "Weak", width: "30%", color: "bg-ember" };
-  }
-
-  if (score <= 3) {
-    return { label: "Medium", width: "65%", color: "bg-amber-500" };
-  }
-
-  return { label: "Strong", width: "100%", color: "bg-emerald-500" };
-}
-
 export default function RegisterPage(): JSX.Element {
   const router = useRouter();
   const [formError, setFormError] = useState("");
@@ -55,7 +36,6 @@ export default function RegisterPage(): JSX.Element {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors, isSubmitting }
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -66,9 +46,6 @@ export default function RegisterPage(): JSX.Element {
       confirmPassword: ""
     }
   });
-
-  const passwordValue = watch("password") ?? "";
-  const passwordStrength = useMemo(() => getPasswordStrength(passwordValue), [passwordValue]);
 
   const onSubmit = handleSubmit(async (values) => {
     setFormError("");
@@ -89,13 +66,13 @@ export default function RegisterPage(): JSX.Element {
 
   return (
     <AuthShell
-      title="Create Account"
-      subtitle="Start with a secure account and access your dashboard in seconds."
+      title="Register"
+      subtitle="Create an account to manage and track all uploaded files."
       footer={
         <>
-          Already registered?{" "}
-          <Link href="/login" className="font-semibold text-sky transition hover:text-ink">
-            Login here
+          Already have an account?{" "}
+          <Link href="/login" className="font-semibold text-yellow-300 transition hover:text-yellow-200">
+            Login
           </Link>
         </>
       }
@@ -117,16 +94,10 @@ export default function RegisterPage(): JSX.Element {
           type="password"
           autoComplete="new-password"
           placeholder="Create a strong password"
+          hint="Use at least 8 characters"
           error={errors.password?.message}
           {...register("password")}
         />
-
-        <div className="space-y-2">
-          <div className="h-2 overflow-hidden rounded-full bg-white/70">
-            <div className={`h-full ${passwordStrength.color} transition-all duration-300`} style={{ width: passwordStrength.width }} />
-          </div>
-          <p className="text-xs text-ink/70">Password strength: {passwordStrength.label}</p>
-        </div>
 
         <TextField
           label="Confirm Password"
@@ -137,7 +108,7 @@ export default function RegisterPage(): JSX.Element {
           {...register("confirmPassword")}
         />
 
-        {formError ? <p className="rounded-xl bg-ember/10 px-3 py-2 text-sm text-ember">{formError}</p> : null}
+        {formError ? <p className="rounded-lg border border-red-500/50 bg-red-500/10 px-3 py-2 text-sm text-red-300">{formError}</p> : null}
 
         <Button type="submit" loading={isSubmitting}>
           Create Account

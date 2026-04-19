@@ -8,7 +8,7 @@ export const dashboardHelloController = asyncHandler(async (req: Request, res: R
   res.status(200).json({
     success: true,
     data: {
-      message: `Hello, ${name}. Welcome to your dashboard API.`,
+      message: `Hello, ${name}. Welcome to your file uploader.`,
       user: req.user
     }
   });

@@ -65,13 +65,13 @@ export default function LoginPage(): JSX.Element {
 
   return (
     <AuthShell
-      title="Welcome Back"
-      subtitle="Sign in to continue managing your uploads and dashboard."
+      title="Login"
+      subtitle="Use your account credentials to access the dashboard."
       footer={
         <>
           No account yet?{" "}
-          <Link href="/register" className="font-semibold text-sky transition hover:text-ink">
-            Create one
+          <Link href="/register" className="font-semibold text-yellow-300 transition hover:text-yellow-200">
+            Register
           </Link>
         </>
       }
@@ -90,12 +90,12 @@ export default function LoginPage(): JSX.Element {
           label="Password"
           type="password"
           autoComplete="current-password"
-          placeholder="Enter your password"
+          placeholder="Enter password"
           error={errors.password?.message}
           {...register("password")}
         />
 
-        {formError ? <p className="rounded-xl bg-ember/10 px-3 py-2 text-sm text-ember">{formError}</p> : null}
+        {formError ? <p className="rounded-lg border border-red-500/50 bg-red-500/10 px-3 py-2 text-sm text-red-300">{formError}</p> : null}
 
         <Button type="submit" loading={isSubmitting}>
           Login
